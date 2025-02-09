@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "npx nodemon -r dotenv/config --experimental-json-modules src/index.js",
+    "bhaiya": "npx nodemon -r dotenv/config --experimental-json-modules src/index.js",
     "start": "node src/index.js",
-    "concurrently": "concurrently \"npm run dev\" \"npm run some-other-script\""
+    "concurrently": "concurrently \"npm run dev\" \"npm run bhaiya\""
   },
   "keywords": [],
   "author": "",
