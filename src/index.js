@@ -1,13 +1,10 @@
+import express from "express";
 import dotenv from "dotenv";
-import connectDB from "./db/index.js";
-import { app } from "./app.js";
+import connectDB from "./db/connection.js";
+const app = express()
 
-// Configured Dotenv
-dotenv.config({ path: "./.env" });
+dotenv.config({path: "./.env"});
 
-// Done by Asad-Ali-Developer!
-connectDB().then(() => {
-  app.listen(process.env.PORT, () => {
-    console.log(`Server is listening on port: ${process.env.PORT}`);
-  });
-});
+connectDB();
+
+app.listen(process.env.PORT,()=>{`app is listening on port ${process.env.PORT}`})
