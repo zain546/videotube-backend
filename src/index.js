@@ -15,7 +15,3 @@ connectDB()
     console.log("Mondo DB connection failed!", error);
   });
 
-// Add this to your app.js file
-app.get("/test", (req, res) => {
-  res.send("Test route is working");
-});

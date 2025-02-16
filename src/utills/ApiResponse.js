@@ -8,5 +8,4 @@ class ApiResponse {
   }
 }
 
-export default ApiResponse; // Export the class for use in API responses
-// Utility class for generating custom error objects
+export  {ApiResponse}; 
