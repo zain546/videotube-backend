@@ -23,4 +23,4 @@ class ApiError extends Error {
   }
 }
 
-export default ApiError; // Export the class to be used in other parts of the application
+export {ApiError}; // Export the class to be used in other parts of the application
