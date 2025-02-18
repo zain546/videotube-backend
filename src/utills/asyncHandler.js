@@ -7,4 +7,4 @@ const asyncHandler = (requestHandler) => {
       }); // Pass errors to Express error handling middleware
 };
 
-export default asyncHandler;
+export {asyncHandler};
