@@ -13,7 +13,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
     user.refreshToken = refreshToken;
-    user.save({ validateBeforeSave: false });
+    await user.save({ validateBeforeSave: false });
     return { accessToken, refreshToken };
   } catch (error) {
     throw new ApiError(500, "Error generating tokens", error);
@@ -141,7 +141,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: { refreshToken: undefined },
+      $unset: { refreshToken: 1 },//this removes the field from document
     },
     { new: true }
   );
@@ -182,7 +182,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     const { accessToken, newRefreshToken } =
       await generateAccessAndRefreshTokens(user._id);
     return res
-      .stutus(200)
+      .status(200)
       .cookie("accessToken", accessToken, options)
       .cookie("refreshToken", newRefreshToken, options)
       .json(
@@ -241,7 +241,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
   ).select("-password");
   return res
     .status(200)
-    .josn(new ApiResponse(200, user, "User details updated successfully"));
+    .json(new ApiResponse(200, user, "User details updated successfully"));
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
@@ -253,7 +253,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
   if (!avatar.url) {
     throw new ApiError(400, "Error while uploading avatat link on cloudnary");
   }
-  const user = User.findByIdAndUpdate(
+  const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
@@ -262,7 +262,11 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     },
     { new: true }
   ).select("-password");
-  return res.status(200).json(200, user, "Avatar is updated successfully.");
+  return res
+  .status(200)
+  .json(
+    new ApiResponse(200, user, "Avatar is updated successfully.")
+  );
 });
 
 const updateUserCoverImage = asyncHandler(async (req, res) => {
@@ -277,7 +281,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
       "Error while uploading coverImage link on cloudnary"
     );
   }
-  const user = User.findByIdAndUpdate(
+  const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
@@ -329,7 +333,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         },
         isSubcribed: {
           $cond: {
-            if: { $in: [req.users?._id, "$subcribers.subcriber"] },
+            if: { $in: [req.user?._id, "$subscribers.subscriber"] },
             then: true,
             else: false,
           },
@@ -361,7 +365,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 });
 
 const getWatchHistory = asyncHandler(async(req,res)=>{
-  const user = User.aggregate([
+  const user = await User.aggregate([
     {
       $match:{
         _id: new mongoose.Types.ObjectId(req.user._id)
@@ -390,18 +394,18 @@ const getWatchHistory = asyncHandler(async(req,res)=>{
                 }
               ]
             }
+          },
+          {
+            $unwind: "$owner"
           }
         ]
       }
-    },
-    {
-      $unwind: "$owner"
     }
   ])
   return res
     .status(200)
     .json(
-      new ApiResponse(200, user[0].getWatchHistory, 
+      new ApiResponse(200, user[0]?.getWatchHistory || [], 
         "Watch history fetched successfully."
       )
     )
@@ -413,7 +417,7 @@ export {
   logoutUser,
   refreshAccessToken,
   changeCurrentPassword,
-  updateAccountDetails as updateUserDetails,
+  updateAccountDetails,
   getCurrentUser,
   updateUserAvatar,
   updateUserCoverImage,
