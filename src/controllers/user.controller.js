@@ -226,7 +226,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, req.user, "User details fetched successfully"));
 });
 
-const updateUserDetails = asyncHandler(async (req, res) => {
+const updateAccountDetails = asyncHandler(async (req, res) => {
   //get user details from frontend/req.body
   //update user details
   //send response
@@ -361,7 +361,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 });
 
 const getWatchHistory = asyncHandler(async(req,res)=>{
-  User.aggregate([
+  const user = User.aggregate([
     {
       $match:{
         _id: new mongoose.Types.ObjectId(req.user._id)
@@ -395,7 +395,7 @@ const getWatchHistory = asyncHandler(async(req,res)=>{
       }
     },
     {
-      { $unwind: "$owner" }
+      $unwind: "$owner"
     }
   ])
   return res
@@ -413,7 +413,7 @@ export {
   logoutUser,
   refreshAccessToken,
   changeCurrentPassword,
-  updateUserDetails,
+  updateAccountDetails as updateUserDetails,
   getCurrentUser,
   updateUserAvatar,
   updateUserCoverImage,
