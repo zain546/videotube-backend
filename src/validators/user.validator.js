@@ -21,6 +21,7 @@ const changePasswordSchema = Joi.object({
 const updateUserSchema = Joi.object({
   fullName: Joi.string().trim(),
   email: Joi.string().email().trim().lowercase(),
+  username: Joi.string().trim().lowercase(),
 });
 
 export {

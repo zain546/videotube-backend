@@ -26,7 +26,6 @@ const generateAccessAndRefreshTokens = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  // Code to register a user
   //get user details from frontend
   //validate user details
   //check if user already exists - email,username
@@ -36,13 +35,14 @@ const registerUser = asyncHandler(async (req, res) => {
   //remove password and refresh token from response
   //check for user creation
   //return res
+  
 
+  const { username, email, password, fullName } = req.body;
+  // console.log("Request body: ".underline.blue, req.body);
   const { error } = registerUserschema.validate(req.body);
   if (error) {
     throw new ApiError(400, error.details[0].message);
   }
-  const { username, email, password, fullName } = req.body;
-  // console.log("Request body: ".underline.blue, req.body);
   const existedUser = await User.findOne({
     $or: [{ email }, { username }],
   });
@@ -250,11 +250,11 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
   if (error) {
     throw new ApiError(400, error.details[0].message);
   }
-  const { fullName, email } = req.body;
+  const { fullName, email,username } = req.body;
   const user = await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: { fullName, email },
+      $set: { fullName, email, username },
     },
     { new: true }
   ).select("-password");
