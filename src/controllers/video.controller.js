@@ -68,11 +68,92 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
 
 
-
+// http://localhost:8000/api/v1/videos?page=1&limit=10&query=fun&sortBy=views&sortType=desc
 const getAllVideos = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
-  //TODO: get all videos based on query, sort, pagination
+  // get all videos based on query, sort, pagination
+  const {
+     page = 1, //default page is 1 if not provided
+      limit = 10, //default limit is 10
+       query = "", //default query is empty string
+        sortBy  = "createdAt", //default sortBy is createdAt
+         sortType = "desc", //default sortType is desc
+          userId, // User ID (optional, to filter videos by a specific user)
+    } = req.query;
+
+//checking if user if logged in
+if(!req.user){
+  throw new ApiError(401, "Unauthorized! Log in to continue");
+}
+
+const match = {};
+if (query) {
+  match.title = { $regex: query, $options: "i" };
+}
+if (userId) {
+  match.owner = userId;
+}
+//- $regex allows partial matching (e.g., searching "fun" will find "funny video").
+// - $options: "i" makes it case-insensitive (e.g., "FUN" and "fun" are treated the same).
+
+const videos = await Video.aggregate([
+  { $match: match }, // Filtering videos based on the match criteria
+  {
+    $lookup:{
+      from: "users",
+      localField: "owner",
+      foreignField: "_id",
+      as: "owner"
+    }
+  },
+  {
+    $unwind: "$owner"
+  },
+  {
+    $project:{
+      videoFile:1,
+      title:1,
+      description:1,
+      thumbnail:1,
+      duration:1,
+      views:1,
+      isPublished:1,
+      createdAt:1,
+      updatedAt:1,
+      "owner.fullName":1,
+      "owner.email":1
+    }
+  },
+  {
+    $sort: {
+      [sortBy]: sortType === "desc" ? -1 : 1,
+    },
+  },
+  {
+    $skip: (page - 1) * parseInt(limit),
+     /*
+        $skip: Skipping records for pagination
+        - Formula: (page number - 1) * limit
+        - If page = 2 and limit = 10, skips (2-1) * 10 = 10 records
+      */
+  },
+  {
+    $limit: parseInt(limit),
+  }
+
+])
+
+if(!videos.length){
+  throw new ApiError(404, "No videos found!")
+}
+
+res
+.status(200)
+.json(new ApiResponse(200, videos, "Videos fetched successfully!"));
+
 });
+
+
+
 
 const getVideoById = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
