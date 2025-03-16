@@ -15,7 +15,8 @@ import videoRoutes from "./routes/video.routes.js";
 import commentRoutes from "./routes/comment.routes.js";
 import tweetRoutes from "./routes/tweet.routes.js";
 import likeRoutes from "./routes/like.routes.js";
-import subcriptionRoutes from "./routes/subscription.routes.js"
+import subcriptionRoutes from "./routes/subscription.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
 
 //users routes
 app.use("/api/v1/users", userRoutes);
@@ -24,6 +25,7 @@ app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/tweets", tweetRoutes);
 app.use("/api/v1/likes",likeRoutes);
 app.use("/api/v1/subscriptions",subcriptionRoutes);
+app.use("/api/v1/dashboard",dashboardRoutes);
 
 
 export { app };
