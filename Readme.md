@@ -93,10 +93,3 @@ public/
 This project is licensed under the [MIT License](LICENSE).
 
 ---
-
-> 🔍 For more details, refer to comments and code inside each file.
-
-```
-
-Let me know if you’d like this turned into a downloadable file or want help generating a public GitHub README with badges etc.
-```
