@@ -1,6 +1,3 @@
-Here is your **fully corrected `README.md` markdown content** – simply copy and paste it directly into your `.md` file:
-
-````md
 # VideoTube Backend
 
 A full-featured backend for a video-sharing platform, inspired by YouTube, built with Node.js, Express, and MongoDB. This API supports user authentication, video uploads, playlists, comments, likes, subscriptions, and more.
@@ -38,7 +35,7 @@ A full-featured backend for a video-sharing platform, inspired by YouTube, built
 ```sh
 git clone https://github.com/your-username/videotube-backend.git
 cd videotube-backend
-````
+```
 
 ### 2. Install dependencies
 
